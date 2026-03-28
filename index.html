@@ -999,8 +999,12 @@ function showWarning(msg) {
   setTimeout(() => bar.classList.remove('on'), 3500);
 }
 
+// Only emit important events to the sheet (session_start, answer, submit).
+// Integrity telemetry is bundled into the final submitAll payload instead.
+const SHEET_EVENTS = new Set(['session_start', 'answer']);
 function emit(ev, x) {
   if (!WH || WH.includes('YOUR_')) return;
+  if (!SHEET_EVENTS.has(ev)) return;
   fetch(WH, {
     method: 'POST',
     mode: 'no-cors',
