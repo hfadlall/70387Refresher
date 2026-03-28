@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Strategy · Course Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f2;
+  --white: #ffffff;
+  --ink: #111111;
+  --mid: #555555;
+  --faint: #e2e0d8;
+  --accent: #1a3a5c;
+  --accent-bg: #eef2f7;
+  --correct: #1a6b3c;
+  --correct-bg: #eef7f2;
+  --wrong: #8b1a1a;
+  --wrong-bg: #fdf0f0;
+  --r: 10px;
+  --warn: #c0392b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', Georgia, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.login-card {
+  background: var(--white);
+  border: 1px solid var(--faint);
+  border-radius: 14px;
+  padding: 2.5rem 3rem;
+  width: min(400px, 90vw);
+  text-align: center;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+.l-eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.5rem; font-weight: 600; }
+.l-title { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 900; color: var(--ink); margin-bottom: 0.3rem; }
+.l-sub { font-size: 0.85rem; color: var(--mid); margin-bottom: 1.8rem; }
+.login-card input {
+  width: 100%; border: 1.5px solid var(--faint); border-radius: 8px;
+  padding: 0.72rem 1rem; font-size: 0.95rem; font-family: inherit;
+  color: var(--ink); background: var(--bg); outline: none; margin-bottom: 0.8rem;
+  transition: border-color 0.15s; user-select: text; -webkit-user-select: text;
+}
+.login-card input:focus { border-color: var(--accent); }
+.btn {
+  background: var(--accent); color: #fff; border: none; border-radius: 8px;
+  padding: 0.72rem 1.5rem; font-size: 0.9rem; font-weight: 600;
+  font-family: inherit; cursor: pointer; width: 100%; transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.88; }
+.l-note { font-size: 0.75rem; color: #aaa; margin-top: 0.9rem; line-height: 1.5; }
+
+/* ── INTEGRITY BAR ── */
+#ibar {
+  display: none; position: fixed; top: 0; left: 0; right: 0;
+  background: var(--white); border-bottom: 1px solid var(--faint);
+  padding: 0.35rem 1.5rem; font-size: 0.74rem; color: var(--mid);
+  z-index: 890; align-items: center; justify-content: space-between;
+}
+#ibar.on { display: flex; }
+.ibar-l { display: flex; gap: 1.2rem; align-items: center; }
+.idot { width: 6px; height: 6px; border-radius: 50%; background: #27ae60; flex-shrink: 0; }
+.ival { color: var(--ink); font-weight: 600; }
+#twarn {
+  color: var(--warn); font-weight: 600; display: none;
+  animation: warnPulse 0.3s ease;
+}
+@keyframes warnPulse { 0%{opacity:0;transform:scale(0.95)} 100%{opacity:1;transform:scale(1)} }
+
+/* ── FULLSCREEN OVERLAY ── */
+#fs-overlay {
+  display: none; position: fixed; inset: 0; z-index: 950;
+  background: rgba(0,0,0,0.85);
+  align-items: center; justify-content: center;
+  flex-direction: column; color: #fff; text-align: center;
+}
+#fs-overlay.on { display: flex; }
+#fs-overlay h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.6rem; }
+#fs-overlay p { font-size: 0.9rem; color: #ccc; margin-bottom: 1.4rem; max-width: 360px; }
+#fs-overlay button {
+  background: var(--accent); color: #fff; border: none; border-radius: 8px;
+  padding: 0.7rem 2rem; font-size: 0.9rem; font-weight: 600;
+  font-family: inherit; cursor: pointer;
+}
+
+/* ── WARNING BAR ── */
+#warn-bar {
+  display: none; position: fixed; top: 32px; left: 0; right: 0;
+  background: var(--warn); color: #fff; text-align: center;
+  padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 600;
+  z-index: 895; animation: warnSlide 0.25s ease;
+}
+#warn-bar.on { display: block; }
+@keyframes warnSlide { from{transform:translateY(-100%)} to{transform:translateY(0)} }
+
+/* ── TIMER ── */
+#timer-display { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--accent); }
+#timer-display.urgent { color: var(--warn); }
+
+/* ── APP ── */
+#app { display: none; padding-top: 36px; }
+#app.on { display: block; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 35px; left: 0; right: 0;
+  background: var(--white); border-bottom: 1px solid var(--faint);
+  z-index: 800; display: flex; overflow-x: auto; scrollbar-width: none;
+  padding: 0 1.2rem;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nb {
+  padding: 0.8rem 1rem; font-size: 0.76rem; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--mid);
+  background: none; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+.nb:hover { color: var(--ink); }
+.nb.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── PAGES ── */
+.page { display: none; max-width: 700px; margin: 0 auto; padding: 5.2rem 1.4rem 4rem; }
+.page.on { display: block; }
+
+/* ── HOME ── */
+.h-eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--accent); margin-bottom: 0.6rem; }
+.h-title { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 4vw, 2.5rem); font-weight: 900; line-height: 1.18; margin-bottom: 0.9rem; }
+.h-lead { font-size: 1rem; color: var(--mid); margin-bottom: 2.2rem; font-weight: 300; max-width: 560px; }
+
+.lo-section { margin-bottom: 2rem; }
+.lo-header { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.8rem; }
+.lo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border: 1px solid var(--faint); border-radius: var(--r); overflow: hidden; background: var(--faint); }
+@media(max-width:540px){ .lo-grid { grid-template-columns: 1fr; } }
+.lo-cell { background: var(--white); padding: 1.2rem 1.3rem; }
+.lo-n { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--faint); line-height: 1; margin-bottom: 0.35rem; }
+.lo-cell h4 { font-size: 0.86rem; font-weight: 600; margin-bottom: 0.25rem; }
+.lo-cell p { font-size: 0.81rem; color: var(--mid); line-height: 1.5; }
+
+.wim-box {
+  background: var(--accent-bg); border: 1px solid #d0dbe8;
+  border-radius: var(--r); padding: 1.3rem 1.5rem; margin-bottom: 2rem;
+}
+.wim-title { font-size: 0.88rem; font-weight: 600; color: var(--accent); margin-bottom: 0.4rem; }
+.wim-box p { font-size: 0.84rem; color: var(--mid); line-height: 1.6; }
+
+.topic-list { background: var(--white); border: 1px solid var(--faint); border-radius: var(--r); overflow: hidden; margin-bottom: 1.8rem; }
+.tl-head { padding: 0.85rem 1.4rem; border-bottom: 1px solid var(--faint); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--mid); }
+.tl-row { display: flex; align-items: center; gap: 0.9rem; padding: 0.85rem 1.4rem; border-bottom: 1px solid var(--faint); cursor: pointer; transition: background 0.1s; }
+.tl-row:last-child { border-bottom: none; }
+.tl-row:hover { background: var(--bg); }
+.tl-n { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--faint); min-width: 24px; }
+.tl-body { flex: 1; }
+.tl-title { font-size: 0.88rem; font-weight: 600; }
+.tl-case { font-size: 0.76rem; color: var(--mid); }
+.tl-arr { color: var(--faint); }
+.tl-row.done .tl-n { color: var(--correct); }
+.tl-row.done .tl-arr { color: var(--correct); }
+
+.cta-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.75rem 1.8rem; font-size: 0.9rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.15s; }
+.cta-btn:hover { opacity: 0.88; }
+
+/* ── TOPIC PAGES ── */
+.t-eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--accent); margin-bottom: 0.55rem; }
+.t-title { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3.2vw, 1.95rem); font-weight: 900; line-height: 1.22; margin-bottom: 1.6rem; }
+
+.cards2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.8rem; }
+@media(max-width:540px){ .cards2 { grid-template-columns: 1fr; } }
+
+.card { background: var(--white); border: 1px solid var(--faint); border-radius: var(--r); padding: 1.25rem 1.3rem; }
+.clabel { font-size: 0.67rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.45rem; }
+.clabel.muted { color: var(--mid); }
+.card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; line-height: 1.35; }
+.card p { font-size: 0.82rem; color: var(--mid); line-height: 1.55; }
+
+/* ── EXERCISE ── */
+.ex { background: var(--white); border: 1px solid var(--faint); border-radius: var(--r); padding: 1.4rem 1.5rem; }
+.exlabel { font-size: 0.67rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.7rem; }
+.exq { font-size: 0.96rem; font-weight: 600; color: var(--ink); margin-bottom: 1rem; line-height: 1.42; }
+
+.opts { display: flex; flex-direction: column; gap: 0.5rem; }
+.opt {
+  display: flex; align-items: flex-start; gap: 0.65rem;
+  background: var(--bg); border: 1.5px solid var(--faint); border-radius: 8px;
+  padding: 0.7rem 0.95rem; cursor: pointer; font-size: 0.86rem; text-align: left;
+  font-family: inherit; color: var(--ink); line-height: 1.4;
+  transition: border-color 0.12s, background 0.12s;
+}
+.opt:hover:not(.lk) { border-color: var(--accent); background: var(--accent-bg); }
+.opt .l {
+  width: 20px; height: 20px; min-width: 20px; border-radius: 4px;
+  background: var(--faint); font-size: 0.7rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mid); flex-shrink: 0; margin-top: 2px;
+}
+.opt.ok { border-color: var(--correct) !important; background: var(--correct-bg) !important; }
+.opt.ok .l { background: var(--correct); color: #fff; }
+.opt.ng { border-color: var(--wrong) !important; background: var(--wrong-bg) !important; }
+.opt.ng .l { background: var(--wrong); color: #fff; }
+.opt.rv { border-color: #9bbdaa !important; }
+
+.fb { display: none; margin-top: 0.9rem; padding: 0.85rem 1.05rem; border-radius: 8px; font-size: 0.83rem; line-height: 1.55; }
+.fb.on { display: block; }
+.fb.ok { background: var(--correct-bg); color: var(--correct); border: 1px solid #b5d4c2; }
+.fb.ng { background: var(--wrong-bg); color: var(--wrong); border: 1px solid #e6b8b8; }
+
+/* ── MATCH ── */
+.mwrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+@media(max-width:480px){ .mwrap { grid-template-columns: 1fr; } }
+.mhead { font-size: 0.67rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.45rem; }
+.dz {
+  border: 1.5px dashed var(--faint); border-radius: 8px;
+  padding: 0.55rem 0.8rem; min-height: 38px; margin-bottom: 0.45rem;
+  font-size: 0.81rem; color: var(--mid); transition: background 0.12s, border-color 0.12s;
+  line-height: 1.4;
+}
+.dz.ov { background: var(--accent-bg); border-color: var(--accent); }
+.dz.ok { border-color: var(--correct); background: var(--correct-bg); border-style: solid; }
+.dz.ng { border-color: var(--wrong); background: var(--wrong-bg); border-style: solid; }
+.dz .placed { font-weight: 600; color: var(--accent); font-size: 0.84rem; }
+
+.pill {
+  display: inline-block; background: var(--bg); border: 1.5px solid var(--faint);
+  border-radius: 6px; padding: 0.4rem 0.8rem; font-size: 0.83rem; font-weight: 600;
+  cursor: grab; margin: 0 0.35rem 0.4rem 0; user-select: none;
+  transition: border-color 0.12s, opacity 0.12s;
+}
+.pill:hover { border-color: var(--accent); }
+.pill.used { opacity: 0.28; cursor: default; }
+
+.chkbtn {
+  margin-top: 0.9rem; background: none; border: 1.5px solid var(--faint);
+  border-radius: 7px; padding: 0.55rem 1.2rem; font-size: 0.83rem; font-weight: 600;
+  font-family: inherit; color: var(--ink); cursor: pointer; transition: border-color 0.12s;
+}
+.chkbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── RESULTS PAGE ── */
+.ref-box {
+  background: var(--white); border: 1px solid var(--faint); border-radius: var(--r);
+  padding: 1.4rem 1.5rem; margin-bottom: 1.4rem;
+}
+.ref-label { font-size: 0.67rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.6rem; }
+.ref-prompt { font-size: 0.93rem; font-weight: 600; color: var(--ink); margin-bottom: 0.8rem; line-height: 1.4; }
+.ref-sub { font-size: 0.8rem; color: var(--mid); margin-bottom: 0.9rem; line-height: 1.5; }
+textarea.ref-input {
+  width: 100%; min-height: 120px; border: 1.5px solid var(--faint); border-radius: 8px;
+  padding: 0.8rem 1rem; font-size: 0.88rem; font-family: inherit;
+  color: var(--ink); background: var(--bg); outline: none; resize: vertical;
+  line-height: 1.6; user-select: text; -webkit-user-select: text;
+}
+textarea.ref-input:focus { border-color: var(--accent); }
+
+.timer-box {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--accent-bg); border: 1px solid #d0dbe8;
+  border-radius: 8px; padding: 0.7rem 1.2rem; margin-bottom: 1.4rem;
+}
+.timer-label { font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+
+.submit-btn {
+  background: var(--accent); color: #fff; border: none; border-radius: 8px;
+  padding: 0.8rem 2rem; font-size: 0.92rem; font-weight: 600;
+  font-family: inherit; cursor: pointer; transition: opacity 0.15s;
+}
+.submit-btn:hover { opacity: 0.88; }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── COMPLETION SCREEN ── */
+#complete-screen {
+  display: none; position: fixed; inset: 0;
+  background: var(--bg);
+  align-items: center; justify-content: center;
+  z-index: 998; flex-direction: column; text-align: center;
+}
+#complete-screen.on { display: flex; }
+.comp-icon { font-size: 3rem; margin-bottom: 1rem; }
+.comp-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 900; margin-bottom: 0.5rem; }
+.comp-sub { font-size: 0.95rem; color: var(--mid); max-width: 380px; line-height: 1.6; }
+
+/* ── PROGRESS ── */
+.progbar { position: fixed; bottom: 0; left: 0; right: 0; height: 3px; background: var(--faint); z-index: 700; }
+.progfill { height: 100%; background: var(--accent); transition: width 0.3s; }
+
+.donemsg { display: none; margin-top: 1.4rem; padding: 0.9rem 1.1rem; background: var(--correct-bg); border: 1px solid #b5d4c2; border-radius: 8px; font-size: 0.86rem; color: var(--correct); font-weight: 500; }
+.donemsg.on { display: block; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="l-eyebrow">70-387 · CMU-Q · Spring 2026</div>
+    <div class="l-title">Platform Strategy</div>
+    <div class="l-sub">Course recap: six topics, reflection, ten minutes</div>
+    <input type="text" id="sname" placeholder="Your full name" autocomplete="off">
+    <button class="btn" onclick="goLogin()">Begin</button>
+    <div class="l-note">This session is monitored. Tab switching, idle time, and screen activity are logged.</div>
+  </div>
+</div>
+
+<!-- FULLSCREEN OVERLAY -->
+<div id="fs-overlay">
+  <h2>Fullscreen Required</h2>
+  <p>This exercise runs in fullscreen mode. Please re-enter fullscreen to continue.</p>
+  <button onclick="enterFullscreen()">Re-enter Fullscreen</button>
+</div>
+
+<!-- WARNING BAR -->
+<div id="warn-bar"></div>
+
+<!-- INTEGRITY BAR -->
+<div id="ibar">
+  <div class="ibar-l">
+    <div class="idot"></div>
+    <span>Session active · <span class="ival" id="iname"></span></span>
+    <span>Switches: <span class="ival" id="isw">0</span></span>
+    <span>Idle: <span class="ival" id="iidle">0</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span id="twarn">⚠ Focus lost</span>
+    <span id="timer-display">10:00</span>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="nav">
+    <button class="nb on" onclick="go(0)">Home</button>
+    <button class="nb" onclick="go(1)">1 · Network Effects</button>
+    <button class="nb" onclick="go(2)">2 · Launch</button>
+    <button class="nb" onclick="go(3)">3 · Monetization</button>
+    <button class="nb" onclick="go(4)">4 · Design</button>
+    <button class="nb" onclick="go(5)">5 · Governance</button>
+    <button class="nb" onclick="go(6)">6 · Competition</button>
+    <button class="nb" onclick="go(7)">Results</button>
+  </nav>
+
+  <!-- HOME -->
+  <div class="page on" id="p0">
+    <div class="h-eyebrow">Course Recap · 70-387</div>
+    <h1 class="h-title">What this course set out to teach you, and why it matters.</h1>
+    <p class="h-lead">This semester, you built a way of thinking about markets that most business professionals never develop. Here is what that looks like.</p>
+
+    <div class="lo-section">
+      <div class="lo-header">Learning Objectives</div>
+      <div class="lo-grid">
+        <div class="lo-cell">
+          <div class="lo-n">01</div>
+          <h4>Formulate platform strategy</h4>
+          <p>Design strategies to grow, maintain, and capture value from digital platforms, including launch sequencing, monetization timing, and governance design.</p>
+        </div>
+        <div class="lo-cell">
+          <div class="lo-n">02</div>
+          <h4>Apply strategic frameworks</h4>
+          <p>Use management concepts like network effects, multi-homing costs, and tipping conditions to explain how and when platforms grow and decline.</p>
+        </div>
+        <div class="lo-cell">
+          <div class="lo-n">03</div>
+          <h4>Analyze competitive dynamics</h4>
+          <p>Distinguish between inter-platform competition (which ecosystem wins), intra-platform competition (who wins within an ecosystem), and platform envelopment.</p>
+        </div>
+        <div class="lo-cell">
+          <div class="lo-n">04</div>
+          <h4>Communicate strategic decisions</h4>
+          <p>Critically analyze real-world platform events and articulate strategic reasoning clearly, both in writing and in discussion.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wim-box">
+      <div class="wim-title">Why does this matter?</div>
+      <p>Every sector in Qatar National Vision 2030, from logistics to education to healthcare, is a platform opportunity. The frameworks you developed this semester are not abstract. They are the strategic vocabulary for the economy you are about to enter. Companies that understand network effects, governance tradeoffs, and platform launch dynamics will shape Qatar's digital infrastructure. The ones that don't will supply it.</p>
+    </div>
+
+    <div class="topic-list">
+      <div class="tl-head">Six topics to review</div>
+      <div class="tl-row" id="tr1" onclick="go(1)"><div class="tl-n">01</div><div class="tl-body"><div class="tl-title">Network Effects</div><div class="tl-case">Fasten · TikTok</div></div><div class="tl-arr">→</div></div>
+      <div class="tl-row" id="tr2" onclick="go(2)"><div class="tl-n">02</div><div class="tl-body"><div class="tl-title">Platform Launch</div><div class="tl-case">Alfie</div></div><div class="tl-arr">→</div></div>
+      <div class="tl-row" id="tr3" onclick="go(3)"><div class="tl-n">03</div><div class="tl-body"><div class="tl-title">Monetization</div><div class="tl-case">Spotify · ZBJ</div></div><div class="tl-arr">→</div></div>
+      <div class="tl-row" id="tr4" onclick="go(4)"><div class="tl-n">04</div><div class="tl-body"><div class="tl-title">Platform Design</div><div class="tl-case">Airbnb · ZBJ</div></div><div class="tl-arr">→</div></div>
+      <div class="tl-row" id="tr5" onclick="go(5)"><div class="tl-n">05</div><div class="tl-body"><div class="tl-title">Governance</div><div class="tl-case">Epic Games · Airbnb</div></div><div class="tl-arr">→</div></div>
+      <div class="tl-row" id="tr6" onclick="go(6)"><div class="tl-n">06</div><div class="tl-body"><div class="tl-title">Competition</div><div class="tl-case">TikTok · Epic Games</div></div><div class="tl-arr">→</div></div>
+    </div>
+
+    <button class="cta-btn" onclick="go(1)">Start with Network Effects →</button>
+  </div>
+
+  <!-- TOPIC 1: NETWORK EFFECTS -->
+  <div class="page" id="p1">
+    <div class="t-eyebrow">Topic 01 · Network Effects</div>
+    <h1 class="t-title">The value of a platform is not what it does. It is who else is on it.</h1>
+    <div class="cards2">
+      <div class="card">
+        <div class="clabel">Concept</div>
+        <h4>Same-side vs. cross-side, strong vs. weak</h4>
+        <p>Cross-side: more riders make Uber more valuable to drivers. Same-side: can be positive (messaging apps) or negative (too many sellers competing for the same buyers). The strength of NEs determines whether markets tip.</p>
+      </div>
+      <div class="card">
+        <div class="clabel muted">From the cases</div>
+        <h4>Fasten had the model. It didn't have the network.</h4>
+        <p>Lower commissions and transparent pricing weren't enough when riders couldn't get a car in 4 minutes. Network effects don't reward fairness. They reward density.</p>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="exlabel">Exercise · Multiple Choice</div>
+      <div class="exq">A food delivery app in Doha has 200 restaurants but very few customers ordering. Adding 50 more restaurants does not increase orders. Why?</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="ansQ('q1',this,'A','C')"><span class="l">A</span>The restaurants are not well-known enough to attract diners</button>
+        <button class="opt" onclick="ansQ('q1',this,'B','C')"><span class="l">B</span>Same-side network effects among restaurants are negative</button>
+        <button class="opt" onclick="ansQ('q1',this,'C','C')"><span class="l">C</span>Cross-side network effects only activate when the other side (customers) reaches critical mass</button>
+        <button class="opt" onclick="ansQ('q1',this,'D','C')"><span class="l">D</span>The platform has a monetization problem, not a network effects problem</button>
+      </div>
+      <div class="fb ok" id="fq1ok">✓ Correct. More restaurants don't help if no one is ordering. Cross-side NEs require both sides to reach a threshold. This is the chicken-and-egg problem in action: supply without demand is just a catalogue.</div>
+      <div class="fb ng" id="fq1ng">Think about which side creates value for which. Adding restaurants only matters if someone is there to order from them. What needs to happen on the demand side before supply-side growth starts compounding?</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 2: LAUNCH -->
+  <div class="page" id="p2">
+    <div class="t-eyebrow">Topic 02 · Platform Launch</div>
+    <h1 class="t-title">Every platform starts with zero users on both sides. How you solve that defines everything.</h1>
+    <div class="cards2">
+      <div class="card">
+        <div class="clabel">Concept</div>
+        <h4>Eight strategies, one problem</h4>
+        <p>Seeding, piggybacking, marquee, single-side, micro-market, big-bang, producer evangelism, side-switching. Each solves the chicken-and-egg differently. The right strategy depends on which side is harder to attract and what assets you already have.</p>
+      </div>
+      <div class="card">
+        <div class="clabel muted">From the cases</div>
+        <h4>Alfie needed trainers before it could attract trainees</h4>
+        <p>Without credible fitness professionals on the platform, no consumer would sign up. Alfie's launch challenge was a supply-first problem: the product was only as good as who was already on it.</p>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="exlabel">Exercise · Match the Strategy</div>
+      <div class="exq">Drag each strategy to its correct example.</div>
+      <div class="mwrap">
+        <div>
+          <div class="mhead">Example</div>
+          <div class="dz" data-ans="Piggyback" ondragover="dov(event)" ondrop="dop(event,this,'m2')">PayPal embedded itself into eBay checkout before building its own platform</div>
+          <div class="dz" data-ans="Seeding" ondragover="dov(event)" ondrop="dop(event,this,'m2')">Reddit's founders posted under fake accounts to simulate early activity</div>
+          <div class="dz" data-ans="Single-side" ondragover="dov(event)" ondrop="dop(event,this,'m2')">OpenTable gave restaurants free reservation software before any diners joined</div>
+          <div class="dz" data-ans="Marquee" ondragover="dov(event)" ondrop="dop(event,this,'m2')">PlayStation secured EA Sports exclusives before console launch</div>
+        </div>
+        <div>
+          <div class="mhead">Strategy</div>
+          <div id="m2-pills">
+            <span class="pill" draggable="true" data-val="Marquee" ondragstart="dst(event)">Marquee</span>
+            <span class="pill" draggable="true" data-val="Single-side" ondragstart="dst(event)">Single-side</span>
+            <span class="pill" draggable="true" data-val="Piggyback" ondragstart="dst(event)">Piggyback</span>
+            <span class="pill" draggable="true" data-val="Seeding" ondragstart="dst(event)">Seeding</span>
+          </div>
+        </div>
+      </div>
+      <button class="chkbtn" onclick="chk('m2')">Check</button>
+      <div class="fb ok" id="fm2ok">✓ All correct. Key to remember: Piggyback borrows someone else's existing users. Seeding means the platform manufactures its own early supply. Those two are the ones that get mixed up.</div>
+      <div class="fb ng" id="fm2ng">Some are off. Piggyback = riding another platform's existing user base (PayPal needed eBay buyers). Seeding = platform itself creates or fakes the initial supply (Reddit needed posts before real users showed up).</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 3: MONETIZATION -->
+  <div class="page" id="p3">
+    <div class="t-eyebrow">Topic 03 · Monetization</div>
+    <h1 class="t-title">Charge the side that can bear it. Subsidize the side that makes you valuable.</h1>
+    <div class="cards2">
+      <div class="card">
+        <div class="clabel">Concept</div>
+        <h4>Price asymmetrically, and time it right</h4>
+        <p>Subsidize whoever is harder to attract or more valuable to have. Charge whoever values their presence on the other side. Charging too early, before lock-in, kills the network effect you haven't grown yet.</p>
+      </div>
+      <div class="card">
+        <div class="clabel muted">From the cases</div>
+        <h4>Spotify and ZBJ: same logic, different contexts</h4>
+        <p>Spotify kept listeners cheap (freemium) to build the audience that gave it leverage with labels. ZBJ had to build transaction trust before taking a meaningful cut. The principle is the same: monetize after lock-in, not before.</p>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="exlabel">Exercise · Multiple Choice</div>
+      <div class="exq">You're launching a tutoring marketplace in Qatar. Students are price-sensitive; tutors invest significant time setting up profiles. What's the right approach at launch?</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="ansQ('q3',this,'A','C')"><span class="l">A</span>Charge tutors a 20% commission from day one: they benefit most from bookings</button>
+        <button class="opt" onclick="ansQ('q3',this,'B','C')"><span class="l">B</span>Charge students a booking fee: they're the buyers, so they should pay</button>
+        <button class="opt" onclick="ansQ('q3',this,'C','C')"><span class="l">C</span>Free for both sides at launch; add a small tutor fee once you have consistent volume</button>
+        <button class="opt" onclick="ansQ('q3',this,'D','C')"><span class="l">D</span>Charge both sides equally: symmetry builds trust</button>
+      </div>
+      <div class="fb ok" id="fq3ok">✓ Right. Students are elastic, they'll leave if you charge them early. Tutors invest in setup and stay once they have bookings. Charging tutors before you can deliver volume is a quick way to have zero tutors. Free-for-now also signals confidence that you'll earn the right to charge later.</div>
+      <div class="fb ng" id="fq3ng">Think about which side is more price-sensitive and which side creates value for the other by being present. The monetization logic follows from those two questions, not from who "benefits most."</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 4: DESIGN -->
+  <div class="page" id="p4">
+    <div class="t-eyebrow">Topic 04 · Platform Design</div>
+    <h1 class="t-title">Pull, facilitate, match. In that order, always.</h1>
+    <div class="cards2">
+      <div class="card">
+        <div class="clabel">Concept</div>
+        <h4>Three functions, three failure modes</h4>
+        <p><strong>Pull</strong>: attract both sides. <strong>Facilitate</strong>: reduce friction in the exchange. <strong>Match</strong>: connect the right participants. Most platforms fail at one while over-investing in the others.</p>
+      </div>
+      <div class="card">
+        <div class="clabel muted">From the cases</div>
+        <h4>Airbnb's discrimination problem was a facilitate failure</h4>
+        <p>Airbnb could pull hosts and guests and match them well, but hosts were rejecting guests with ethnic-sounding names. The platform connected the parties but couldn't remove bias from the transaction itself.</p>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="exlabel">Exercise · Match the Failure</div>
+      <div class="exq">Match each platform problem to the design function it got wrong.</div>
+      <div class="mwrap">
+        <div>
+          <div class="mhead">Problem</div>
+          <div class="dz" data-ans="Pull" ondragover="dov(event)" ondrop="dop(event,this,'m4')">A Doha services marketplace launched but couldn't attract enough skilled workers to register</div>
+          <div class="dz" data-ans="Match" ondragover="dov(event)" ondrop="dop(event,this,'m4')">Students booked the cheapest tutor regardless of subject fit, leading to poor sessions and churn</div>
+          <div class="dz" data-ans="Facilitate" ondragover="dov(event)" ondrop="dop(event,this,'m4')">Airbnb hosts rejected guests based on name/ethnicity: platform connected them, bias blocked the exchange</div>
+        </div>
+        <div>
+          <div class="mhead">Design Function</div>
+          <div id="m4-pills">
+            <span class="pill" draggable="true" data-val="Pull" ondragstart="dst(event)">Pull</span>
+            <span class="pill" draggable="true" data-val="Facilitate" ondragstart="dst(event)">Facilitate</span>
+            <span class="pill" draggable="true" data-val="Match" ondragstart="dst(event)">Match</span>
+          </div>
+        </div>
+      </div>
+      <button class="chkbtn" onclick="chk('m4')">Check</button>
+      <div class="fb ok" id="fm4ok">✓ Correct. Pull = getting people there. Match = connecting the right people. Facilitate = making the exchange work once they're connected. Airbnb's failure wasn't about who joined or who was paired; it was about what happened in the transaction.</div>
+      <div class="fb ng" id="fm4ng">Revisit the sequence. Pull is a pre-participation problem. Match fails when participants are present but badly paired. Facilitate fails when they're correctly matched but something breaks in the actual exchange.</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 5: GOVERNANCE -->
+  <div class="page" id="p5">
+    <div class="t-eyebrow">Topic 05 · Governance</div>
+    <h1 class="t-title">Platforms write the rules. Enforcing them on your most valuable participants is the hard part.</h1>
+    <div class="cards2">
+      <div class="card">
+        <div class="clabel">Concept</div>
+        <h4>Openness is a dial, and every position has a tradeoff</h4>
+        <p>More open = more innovation, more fragmentation, lower margins. More closed = quality control, higher margins, less external innovation. The right level depends on what you're optimizing for. There's no neutral setting.</p>
+      </div>
+      <div class="card">
+        <div class="clabel muted">From the cases</div>
+        <h4>Epic vs. Apple: a fight about terms, not platforms</h4>
+        <p>Epic wasn't building a rival to iOS. It was contesting the terms of participation inside Apple's ecosystem. The anti-steering ruling broke Apple's information asymmetry: developers could now tell users about cheaper alternatives, even without off-platform payment.</p>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="exlabel">Exercise · Multiple Choice</div>
+      <div class="exq">A top-rated consultant on your platform starts steering clients to pay via bank transfer, bypassing your 15% fee. Three clients have agreed. What's the strategically sound response?</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="ansQ('q5',this,'A','A')"><span class="l">A</span>Remove them from the platform: disintermediation must be stopped decisively and visibly</button>
+        <button class="opt" onclick="ansQ('q5',this,'B','A')"><span class="l">B</span>Warn them privately: you can't afford to lose a consultant clients trust</button>
+        <button class="opt" onclick="ansQ('q5',this,'C','A')"><span class="l">C</span>Do nothing: you still earned the connection, so the platform isn't really losing</button>
+        <button class="opt" onclick="ansQ('q5',this,'D','A')"><span class="l">D</span>Drop your fee to 5% to remove the financial incentive</button>
+      </div>
+      <div class="fb ok" id="fq5ok">✓ Governance credibility requires that rules apply to popular participants, especially popular ones. A private warning signals that the rules are negotiable for high earners. Every other consultant on the platform is watching this call.</div>
+      <div class="fb ng" id="fq5ng">Think about what your response signals to every other consultant. Rules that bend for popular participants aren't rules; they're suggestions with a VIP exemption. What does that do to your platform's governance credibility long-term?</div>
+    </div>
+  </div>
+
+  <!-- TOPIC 6: COMPETITION -->
+  <div class="page" id="p6">
+    <div class="t-eyebrow">Topic 06 · Competition</div>
+    <h1 class="t-title">Inter-platform: which ecosystem wins. Intra-platform: who wins within the ecosystem.</h1>
+    <div class="cards2">
+      <div class="card">
+        <div class="clabel">Concept</div>
+        <h4>Two different wars, two different logics</h4>
+        <p><strong>Inter-platform</strong>: competing to be the ecosystem. Tipping logic applies: strong NEs + costly multi-homing + no niching = winner-take-all. <strong>Intra-platform</strong>: competing within an ecosystem. Platform controls distribution and sets the terms.</p>
+      </div>
+      <div class="card">
+        <div class="clabel muted">From the cases</div>
+        <h4>Lasso failed; Reels survived, because of envelopment</h4>
+        <p>Lasso required TikTok users to adopt a new app from zero. Reels was embedded in Instagram's 1B+ user base. Meta didn't need to win a platform adoption battle; it just needed Reels good enough that users wouldn't bother switching.</p>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="exlabel">Exercise · Multiple Choice</div>
+      <div class="exq">Talabat adds a grocery delivery tab inside its existing app, directly competing with a standalone grocery delivery startup in Doha. What type of competitive threat is this?</div>
+      <div class="opts" id="q6">
+        <button class="opt" onclick="ansQ('q6',this,'A','B')"><span class="l">A</span>Inter-platform competition: Talabat is trying to become the dominant food ecosystem</button>
+        <button class="opt" onclick="ansQ('q6',this,'B','B')"><span class="l">B</span>Platform envelopment: Talabat uses its existing user base to absorb an adjacent market</button>
+        <button class="opt" onclick="ansQ('q6',this,'C','B')"><span class="l">C</span>Intra-platform competition: the grocery startup and Talabat operate on the same platform</button>
+        <button class="opt" onclick="ansQ('q6',this,'D','B')"><span class="l">D</span>A product extension, not a platform move</button>
+      </div>
+      <div class="fb ok" id="fq6ok">✓ Envelopment. Talabat bundles grocery delivery into its existing app, leveraging its installed base and logistics relationships. The standalone startup has to build its network from scratch. It can't match Talabat's reach without matching its network, and matching the network takes years.</div>
+      <div class="fb ng" id="fq6ng">Key question: is Talabat competing against another platform to win users, or is it using its existing platform to absorb a neighboring market? The latter is envelopment, one of the most lethal moves in platform competition.</div>
+    </div>
+  </div>
+
+  <!-- RESULTS / REFLECTION -->
+  <div class="page" id="p7">
+    <div class="t-eyebrow">Reflection</div>
+    <h1 class="t-title">Before you go: one thought to leave behind.</h1>
+
+    <div class="timer-box">
+      <div class="timer-label">Time remaining</div>
+      <div id="timer-display-main" style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--accent);">10:00</div>
+    </div>
+
+    <div class="ref-box">
+      <div class="ref-label">Brief Reflection</div>
+      <div class="ref-prompt">Looking back at the course, what is one concept or framework that changed how you think about markets, technology, or strategy?</div>
+      <div class="ref-sub">Keep it brief: 2 to 4 sentences. There is no right answer here. Be honest about what stuck and why.</div>
+      <textarea class="ref-input" id="reflection" placeholder="Write your reflection here..." maxlength="800"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitAll()">Submit and Exit</button>
+  </div>
+
+</div><!-- /app -->
+
+<div class="progbar"><div class="progfill" id="prog" style="width:0%"></div></div>
+
+<!-- COMPLETION SCREEN -->
+<div id="complete-screen">
+  <div class="comp-icon">✓</div>
+  <div class="comp-title">Submitted</div>
+  <div class="comp-sub">Your responses and reflection have been recorded. Please return to main Zoom.</div>
+</div>
+
+<script>
+// ═══════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════
+const WH = 'https://script.google.com/macros/s/AKfycbzQZ_sOuJR0eA_pilwEzpNKePn4qaH1gv-GporjYFH2t_mZL2oZeFHoIyPMEDMMbfQT/exec';
+const TOTAL_TABS = 8;
+
+// ═══════════════════════════════════
+//  STATE
+// ═══════════════════════════════════
+let student = '';
+let cur = 0;
+let sw = 0;
+let fsExits = 0;
+let idlePeriods = 0;
+let idleTimer = 0;
+let t0 = 0;
+let tEnter = 0;
+let tTimes = new Array(TOTAL_TABS).fill(0);
+let done = new Set();
+let dragging = null;
+let submitted = false;
+let sessionStartISO = '';
+
+let answers = {};
+let answerHistory = {};
+
+let clickCount = 0, keyCount = 0, scrollCount = 0;
+let densityLog = [];
+let screenshotAttempts = 0;
+
+let timerSeconds = 600;
+let timerInterval = null;
+
+// ═══════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════
+function goLogin() {
+  const n = document.getElementById('sname').value.trim();
+  if (!n) { alert('Please enter your name.'); return; }
+  student = n;
+  sessionStartISO = new Date().toISOString();
+  t0 = Date.now();
+  tEnter = Date.now();
+
+  document.getElementById('iname').textContent = n;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('ibar').classList.add('on');
+  document.getElementById('app').classList.add('on');
+
+  initIntegrity();
+  enterFullscreen();
+  startTimer();
+  emit('session_start', { name: student });
+}
+
+// ═══════════════════════════════════
+//  FULLSCREEN
+// ═══════════════════════════════════
+function enterFullscreen() {
+  try {
+    const el = document.documentElement;
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+  } catch (e) {}
+  document.getElementById('fs-overlay').classList.remove('on');
+}
+
+// ═══════════════════════════════════
+//  TIMER
+// ═══════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      if (!submitted) submitAll(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const str = m + ':' + String(s).padStart(2, '0');
+  document.getElementById('timer-display').textContent = str;
+  const main = document.getElementById('timer-display-main');
+  if (main) main.textContent = str;
+  if (timerSeconds <= 120) {
+    document.getElementById('timer-display').classList.add('urgent');
+    if (main) main.style.color = 'var(--warn)';
+  }
+}
+
+// ═══════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════
+function go(i) {
+  if (submitted) return;
+  const el = Math.round((Date.now() - tEnter) / 1000);
+  tTimes[cur] += el;
+  tEnter = Date.now();
+  cur = i;
+  document.querySelectorAll('.page').forEach((p, j) => p.classList.toggle('on', j === i));
+  document.querySelectorAll('.nb').forEach((b, j) => b.classList.toggle('on', j === i));
+  document.getElementById('prog').style.width = (i / (TOTAL_TABS - 1) * 100) + '%';
+  emit('tab_visit', { tab: i });
+}
+
+// ═══════════════════════════════════
+//  MCQ
+// ═══════════════════════════════════
+function ansQ(id, btn, chosen, correct) {
+  const box = document.getElementById(id);
+  if (box.classList.contains('lk')) return;
+  box.classList.add('lk');
+  box.querySelectorAll('.opt').forEach(o => { o.classList.add('lk'); o.style.cursor = 'default'; });
+  const ok = chosen === correct;
+  if (ok) btn.classList.add('ok');
+  else {
+    btn.classList.add('ng');
+    box.querySelectorAll('.opt').forEach(o => {
+      const m = o.getAttribute('onclick').match(/'([A-D])','([A-D])'/);
+      if (m && m[1] === correct) o.classList.add('rv');
+    });
+  }
+  const n = id.replace('q', '');
+  document.getElementById('fq' + n + 'ok').classList.toggle('on', ok);
+  document.getElementById('fq' + n + 'ng').classList.toggle('on', !ok);
+  const tr = document.getElementById('tr' + n);
+  if (tr && ok) tr.classList.add('done');
+  done.add(id);
+  answers[id] = chosen;
+  if (!answerHistory[id]) answerHistory[id] = [];
+  answerHistory[id].push({ answer: chosen, time: new Date().toISOString() });
+  emit('answer', { ex: id, type: 'mcq', chosen, ok });
+}
+
+// ═══════════════════════════════════
+//  DRAG-MATCH
+// ═══════════════════════════════════
+function dst(e) { dragging = e.target; e.dataTransfer.setData('text', e.target.dataset.val); }
+function dov(e) { e.preventDefault(); e.currentTarget.classList.add('ov'); }
+function dop(e, target, mid) {
+  e.preventDefault(); target.classList.remove('ov');
+  const val = e.dataTransfer.getData('text');
+  const prev = target.querySelector('.placed');
+  if (prev) {
+    const pool = document.getElementById(mid + '-pills');
+    if (pool) {
+      const p = document.createElement('span');
+      p.className = 'pill'; p.draggable = true; p.dataset.val = prev.dataset.val;
+      p.textContent = prev.dataset.val; p.setAttribute('ondragstart', 'dst(event)');
+      pool.appendChild(p);
+    }
+    prev.remove();
+  }
+  const pl = document.createElement('span');
+  pl.className = 'placed'; pl.dataset.val = val; pl.textContent = val;
+  target.appendChild(pl);
+  if (dragging) dragging.classList.add('used');
+  dragging = null;
+  if (!answerHistory[mid]) answerHistory[mid] = [];
+  answerHistory[mid].push({ answer: val + ' -> ' + (target.dataset.ans || ''), time: new Date().toISOString() });
+}
+
+function chk(mid) {
+  const zones = document.querySelectorAll('[ondrop*="' + mid + '"]');
+  let allOk = true, anyAns = false;
+  const matchAnswers = {};
+  zones.forEach(z => {
+    const pl = z.querySelector('.placed');
+    if (!pl) { allOk = false; return; }
+    anyAns = true;
+    const ok = z.dataset.ans === pl.dataset.val;
+    z.classList.remove('ok', 'ng'); z.classList.add(ok ? 'ok' : 'ng');
+    if (!ok) allOk = false;
+    matchAnswers[z.dataset.ans] = pl.dataset.val;
+  });
+  if (!anyAns) return;
+  const n = mid.replace('m', '');
+  document.getElementById('fm' + n + 'ok').classList.toggle('on', allOk);
+  document.getElementById('fm' + n + 'ng').classList.toggle('on', !allOk);
+  const tr = document.getElementById('tr' + n);
+  if (tr && allOk) tr.classList.add('done');
+  done.add(mid);
+  answers[mid] = matchAnswers;
+  emit('answer', { ex: mid, type: 'match', ok: allOk, answers: matchAnswers });
+}
+
+// ═══════════════════════════════════
+//  SUBMISSION
+// ═══════════════════════════════════
+function submitAll(auto) {
+  if (submitted) return;
+  submitted = true;
+
+  const el = Math.round((Date.now() - tEnter) / 1000);
+  tTimes[cur] += el;
+
+  const reflection = document.getElementById('reflection').value.trim();
+  const totalTime = Math.round((Date.now() - t0) / 1000);
+
+  const tabTime = {};
+  const tabNames = ['home', 'network_effects', 'launch', 'monetization', 'design', 'governance', 'competition', 'results'];
+  tTimes.forEach((t, i) => { tabTime[tabNames[i] + '_sec'] = t; });
+
+  const payload = {
+    name: student,
+    timestamp: new Date().toISOString(),
+    sessionStart: sessionStartISO,
+    autoSubmitted: !!auto,
+    reflection: reflection,
+    answers: answers,
+    answerHistory: JSON.stringify(answerHistory),
+    integrity: {
+      tabSwitches: sw,
+      fullscreenExits: fsExits,
+      screenshotAttempts: screenshotAttempts,
+      idleSeconds30s: idlePeriods,
+      totalTimeSeconds: totalTime
+    },
+    tabTime: tabTime,
+    interactionDensity: JSON.stringify(densityLog)
+  };
+
+  if (WH && !WH.includes('YOUR_')) {
+    fetch(WH, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  }
+
+  if (timerInterval) clearInterval(timerInterval);
+  try { document.exitFullscreen?.(); } catch (e) {}
+
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('ibar').classList.remove('on');
+  document.getElementById('complete-screen').classList.add('on');
+  document.querySelector('.progbar').style.display = 'none';
+}
+
+// ═══════════════════════════════════
+//  INTEGRITY MONITORING
+// ═══════════════════════════════════
+function initIntegrity() {
+
+  // 1. Tab-switch detection (Page Visibility API)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { sw++; bumpSwitch(); emit('tab_sw', { sw }); }
+  });
+
+  // 2. Window blur (catches alt-tab)
+  window.addEventListener('blur', () => { sw++; bumpSwitch(); emit('blur', { sw }); });
+
+  // 3. Fullscreen enforcement
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && !submitted) {
+      fsExits++;
+      document.getElementById('fs-overlay').classList.add('on');
+      emit('fs_exit', { fsExits });
+    } else {
+      document.getElementById('fs-overlay').classList.remove('on');
+    }
+  });
+
+  // 4. Screenshot detection + 6. DevTools deterrent
+  document.addEventListener('keydown', e => {
+    if (e.key === 'PrintScreen') {
+      screenshotAttempts++; showWarning('Screenshot attempt detected. This has been recorded.');
+      emit('screenshot', { screenshotAttempts });
+    }
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === '3' || e.key === '4')) {
+      screenshotAttempts++; showWarning('Screenshot attempt detected. This has been recorded.');
+      emit('screenshot', { screenshotAttempts });
+    }
+    if (e.key === 'F12') { e.preventDefault(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && 'iIjJ'.includes(e.key)) { e.preventDefault(); return; }
+    if ((e.ctrlKey || e.metaKey) && 'uU'.includes(e.key)) { e.preventDefault(); return; }
+    keyCount++;
+  });
+
+  // 5. Copy prevention
+  document.addEventListener('copy', e => e.preventDefault());
+  document.addEventListener('cut', e => e.preventDefault());
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('selectstart', e => {
+    if (!e.target.matches('textarea, input')) e.preventDefault();
+  });
+
+  // 7. Idle tracking
+  const resetIdle = () => { idleTimer = 0; };
+  ['mousemove', 'keydown', 'click', 'wheel', 'touchstart'].forEach(ev =>
+    document.addEventListener(ev, resetIdle, { passive: true })
+  );
+  document.getElementById('app').addEventListener('scroll', resetIdle, { passive: true });
+
+  setInterval(() => {
+    idleTimer++;
+    if (idleTimer >= 30) {
+      idlePeriods++;
+      document.getElementById('iidle').textContent = idlePeriods;
+    }
+    if (idleTimer % 60 === 0 && idleTimer >= 30) {
+      emit('idle', { idlePeriods, idleTimer, tab: cur });
+    }
+  }, 1000);
+
+  // 9. Interaction density (every 15s)
+  document.addEventListener('click', () => clickCount++);
+  document.addEventListener('scroll', () => scrollCount++, { passive: true });
+  document.addEventListener('wheel', () => scrollCount++, { passive: true });
+
+  setInterval(() => {
+    densityLog.push({ t: Math.round((Date.now() - t0) / 1000), c: clickCount, k: keyCount, s: scrollCount, tab: cur });
+    clickCount = 0; keyCount = 0; scrollCount = 0;
+  }, 15000);
+
+  // Heartbeat (every 3 min)
+  setInterval(() => {
+    const el = Math.round((Date.now() - tEnter) / 1000);
+    tTimes[cur] += el; tEnter = Date.now();
+    emit('hb', { tTimes, sw, fsExits, tab: cur, done: done.size, timer: timerSeconds });
+  }, 180000);
+}
+
+// ═══════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════
+function bumpSwitch() {
+  document.getElementById('isw').textContent = sw;
+  showWarning('Tab switch detected (' + sw + ' total). This has been recorded.');
+  const w = document.getElementById('twarn');
+  w.style.display = 'block';
+  setTimeout(() => w.style.display = 'none', 3000);
+}
+
+function showWarning(msg) {
+  const bar = document.getElementById('warn-bar');
+  bar.textContent = '\u26A0 ' + msg;
+  bar.classList.add('on');
+  setTimeout(() => bar.classList.remove('on'), 3500);
+}
+
+function emit(ev, x) {
+  if (!WH || WH.includes('YOUR_')) return;
+  fetch(WH, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ts: new Date().toISOString(), student, ev, tab: cur, sw, fsExits, idle: idlePeriods, dur: Math.round((Date.now() - t0) / 1000), ...x })
+  }).catch(() => {});
+}
+
+document.getElementById('sname').addEventListener('keydown', e => { if (e.key === 'Enter') goLogin(); });
+</script>
+</body>
+</html>
