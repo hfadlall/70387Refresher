@@ -838,7 +838,13 @@ function chk(mid) {
   const tr = document.getElementById('tr' + n);
   if (tr && allOk) tr.classList.add('done');
   done.add(mid);
-  answers[mid] = matchAnswers;
+  // Store as pipe-delimited string for clean sheet logging
+  const pairs = [];
+  zones.forEach(z => {
+    const pl = z.querySelector('.placed');
+    if (pl) pairs.push(z.dataset.ans + '=' + pl.dataset.val);
+  });
+  answers[mid] = pairs.join('|');
   emit('answer', { ex: mid, type: 'match', ok: allOk, answers: matchAnswers });
 }
 
@@ -901,13 +907,18 @@ function submitAll(auto) {
 // ═══════════════════════════════════
 function initIntegrity() {
 
-  // 1. Tab-switch detection (Page Visibility API)
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { sw++; bumpSwitch(); emit('tab_sw', { sw }); }
-  });
-
-  // 2. Window blur (catches alt-tab)
-  window.addEventListener('blur', () => { sw++; bumpSwitch(); emit('blur', { sw }); });
+  // 1-2. Tab-switch detection (debounced: visibility + blur fire together)
+  let lastSwTime = 0;
+  function countSwitch() {
+    if (submitted) return;
+    const now = Date.now();
+    if (now - lastSwTime < 500) return; // same event, ignore
+    lastSwTime = now;
+    sw++;
+    bumpSwitch();
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) countSwitch(); });
+  window.addEventListener('blur', () => { countSwitch(); });
 
   // 3. Fullscreen enforcement
   document.addEventListener('fullscreenchange', () => {
@@ -999,19 +1010,9 @@ function showWarning(msg) {
   setTimeout(() => bar.classList.remove('on'), 3500);
 }
 
-// Only emit important events to the sheet (session_start, answer, submit).
-// Integrity telemetry is bundled into the final submitAll payload instead.
-const SHEET_EVENTS = new Set(['session_start', 'answer']);
-function emit(ev, x) {
-  if (!WH || WH.includes('YOUR_')) return;
-  if (!SHEET_EVENTS.has(ev)) return;
-  fetch(WH, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ts: new Date().toISOString(), student, ev, tab: cur, sw, fsExits, idle: idlePeriods, dur: Math.round((Date.now() - t0) / 1000), ...x })
-  }).catch(() => {});
-}
+// emit() is a no-op. All data is bundled into the single submitAll() POST.
+// Kept as a stub so existing emit() calls don't throw errors.
+function emit(ev, x) {}
 
 document.getElementById('sname').addEventListener('keydown', e => { if (e.key === 'Enter') goLogin(); });
 </script>
