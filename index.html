@@ -334,6 +334,7 @@ textarea.ref-input:focus { border-color: var(--accent); }
     <div class="idot"></div>
     <span>Session active · <span class="ival" id="iname"></span></span>
     <span>Switches: <span class="ival" id="isw">0</span></span>
+    <span>FS Exits: <span class="ival" id="ifs">0</span></span>
     <span>Idle: <span class="ival" id="iidle">0</span></span>
   </div>
   <div style="display:flex;align-items:center;gap:1rem;">
@@ -358,8 +359,8 @@ textarea.ref-input:focus { border-color: var(--accent); }
   <!-- HOME -->
   <div class="page on" id="p0">
     <div class="h-eyebrow">Course Recap · 70-387</div>
-    <h1 class="h-title">What this course set out to teach you, and why it matters.</h1>
-    <p class="h-lead">This semester, you built a way of thinking about markets that most business professionals never develop. Here is what that looks like.</p>
+    <h1 class="h-title">What this course set out to do, and why.</h1>
+    <p class="h-lead">The hope in this (disjointed) semester is that you built a way of thinking about markets that most business professionals never develop. Here is what that looks like.</p>
 
     <div class="lo-section">
       <div class="lo-header">Learning Objectives</div>
@@ -425,10 +426,11 @@ textarea.ref-input:focus { border-color: var(--accent); }
       <div class="exlabel">Exercise · Multiple Choice</div>
       <div class="exq">A food delivery app in Doha has 200 restaurants but very few customers ordering. Adding 50 more restaurants does not increase orders. Why?</div>
       <div class="opts" id="q1">
-        <button class="opt" onclick="ansQ('q1',this,'A','C')"><span class="l">A</span>The restaurants are not well-known enough to attract diners</button>
-        <button class="opt" onclick="ansQ('q1',this,'B','C')"><span class="l">B</span>Same-side network effects among restaurants are negative</button>
-        <button class="opt" onclick="ansQ('q1',this,'C','C')"><span class="l">C</span>Cross-side network effects only activate when the other side (customers) reaches critical mass</button>
-        <button class="opt" onclick="ansQ('q1',this,'D','C')"><span class="l">D</span>The platform has a monetization problem, not a network effects problem</button>
+        <button class="opt" onclick="ansQ('q1',this,'A','D')"><span class="l">A</span>Because cooking and eating at home is awesome, especially post midnight!</button>
+        <button class="opt" onclick="ansQ('q1',this,'B','D')"><span class="l">B</span>The restaurants are not well-known enough to attract diners</button>
+        <button class="opt" onclick="ansQ('q1',this,'C','D')"><span class="l">C</span>Same-side network effects among restaurants are negative</button>
+        <button class="opt" onclick="ansQ('q1',this,'D','D')"><span class="l">D</span>Cross-side network effects only activate when the other side (customers) reaches critical mass</button>
+        <button class="opt" onclick="ansQ('q1',this,'E','D')"><span class="l">E</span>The platform has a monetization problem, not a network effects problem</button>
       </div>
       <div class="fb ok" id="fq1ok">✓ Correct. More restaurants don't help if no one is ordering. Cross-side NEs require both sides to reach a threshold. This is the chicken-and-egg problem in action: supply without demand is just a catalogue.</div>
       <div class="fb ng" id="fq1ng">Think about which side creates value for which. Adding restaurants only matters if someone is there to order from them. What needs to happen on the demand side before supply-side growth starts compounding?</div>
@@ -457,10 +459,11 @@ textarea.ref-input:focus { border-color: var(--accent); }
       <div class="mwrap">
         <div>
           <div class="mhead">Example</div>
-          <div class="dz" data-ans="Piggyback" ondragover="dov(event)" ondrop="dop(event,this,'m2')">PayPal embedded itself into eBay checkout before building its own platform</div>
-          <div class="dz" data-ans="Seeding" ondragover="dov(event)" ondrop="dop(event,this,'m2')">Reddit's founders posted under fake accounts to simulate early activity</div>
-          <div class="dz" data-ans="Single-side" ondragover="dov(event)" ondrop="dop(event,this,'m2')">OpenTable gave restaurants free reservation software before any diners joined</div>
-          <div class="dz" data-ans="Marquee" ondragover="dov(event)" ondrop="dop(event,this,'m2')">PlayStation secured EA Sports exclusives before console launch</div>
+          <div class="dz" data-ans="Piggyback" ondragover="dov(event)" ondrop="dop(event,this,'m2')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">PayPal embedded itself into eBay checkout before building its own platform</span><span class="dz-slot" style="min-width:90px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
+          <div class="dz" data-ans="Seeding" ondragover="dov(event)" ondrop="dop(event,this,'m2')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">Reddit's founders posted under fake accounts to simulate early activity</span><span class="dz-slot" style="min-width:90px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
+          <div class="dz" data-ans="Single-side" ondragover="dov(event)" ondrop="dop(event,this,'m2')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">OpenTable gave restaurants free reservation software before any diners joined</span><span class="dz-slot" style="min-width:90px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
+          <div class="dz" data-ans="Marquee" ondragover="dov(event)" ondrop="dop(event,this,'m2')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">PlayStation secured EA Sports exclusives before console launch</span><span class="dz-slot" style="min-width:90px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
+          <div class="dz" data-ans="Micro-market" ondragover="dov(event)" ondrop="dop(event,this,'m2')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">Khibra is a platform that wants to dominate the Qatar market that we discussed in class before the break</span><span class="dz-slot" style="min-width:90px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
         </div>
         <div>
           <div class="mhead">Strategy</div>
@@ -469,6 +472,8 @@ textarea.ref-input:focus { border-color: var(--accent); }
             <span class="pill" draggable="true" data-val="Single-side" ondragstart="dst(event)">Single-side</span>
             <span class="pill" draggable="true" data-val="Piggyback" ondragstart="dst(event)">Piggyback</span>
             <span class="pill" draggable="true" data-val="Seeding" ondragstart="dst(event)">Seeding</span>
+            <span class="pill" draggable="true" data-val="Micro-market" ondragstart="dst(event)">Micro-market</span>
+            <span class="pill" draggable="true" data-val="The Power of Tartans!!!" ondragstart="dst(event)">The Power of Tartans!!!</span>
           </div>
         </div>
       </div>
@@ -498,10 +503,11 @@ textarea.ref-input:focus { border-color: var(--accent); }
       <div class="exlabel">Exercise · Multiple Choice</div>
       <div class="exq">You're launching a tutoring marketplace in Qatar. Students are price-sensitive; tutors invest significant time setting up profiles. What's the right approach at launch?</div>
       <div class="opts" id="q3">
-        <button class="opt" onclick="ansQ('q3',this,'A','C')"><span class="l">A</span>Charge tutors a 20% commission from day one: they benefit most from bookings</button>
-        <button class="opt" onclick="ansQ('q3',this,'B','C')"><span class="l">B</span>Charge students a booking fee: they're the buyers, so they should pay</button>
-        <button class="opt" onclick="ansQ('q3',this,'C','C')"><span class="l">C</span>Free for both sides at launch; add a small tutor fee once you have consistent volume</button>
-        <button class="opt" onclick="ansQ('q3',this,'D','C')"><span class="l">D</span>Charge both sides equally: symmetry builds trust</button>
+        <button class="opt" onclick="ansQ('q3',this,'A','D')"><span class="l">A</span>Charge tutors a 20% commission from day one: they benefit most from bookings</button>
+        <button class="opt" onclick="ansQ('q3',this,'B','D')"><span class="l">B</span>Charge students a booking fee: they're the buyers, so they should pay</button>
+        <button class="opt" onclick="ansQ('q3',this,'C','D')"><span class="l">C</span>Who needs tutoring these days with the cognitive offloading capabilities of GenAI!</button>
+        <button class="opt" onclick="ansQ('q3',this,'D','D')"><span class="l">D</span>Free for both sides at launch; add a small tutor fee once you have consistent volume</button>
+        <button class="opt" onclick="ansQ('q3',this,'E','D')"><span class="l">E</span>Charge both sides equally: symmetry builds trust</button>
       </div>
       <div class="fb ok" id="fq3ok">✓ Right. Students are elastic, they'll leave if you charge them early. Tutors invest in setup and stay once they have bookings. Charging tutors before you can deliver volume is a quick way to have zero tutors. Free-for-now also signals confidence that you'll earn the right to charge later.</div>
       <div class="fb ng" id="fq3ng">Think about which side is more price-sensitive and which side creates value for the other by being present. The monetization logic follows from those two questions, not from who "benefits most."</div>
@@ -530,9 +536,9 @@ textarea.ref-input:focus { border-color: var(--accent); }
       <div class="mwrap">
         <div>
           <div class="mhead">Problem</div>
-          <div class="dz" data-ans="Pull" ondragover="dov(event)" ondrop="dop(event,this,'m4')">A Doha services marketplace launched but couldn't attract enough skilled workers to register</div>
-          <div class="dz" data-ans="Match" ondragover="dov(event)" ondrop="dop(event,this,'m4')">Students booked the cheapest tutor regardless of subject fit, leading to poor sessions and churn</div>
-          <div class="dz" data-ans="Facilitate" ondragover="dov(event)" ondrop="dop(event,this,'m4')">Airbnb hosts rejected guests based on name/ethnicity: platform connected them, bias blocked the exchange</div>
+          <div class="dz" data-ans="Pull" ondragover="dov(event)" ondrop="dop(event,this,'m4')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">A Doha services marketplace launched but couldn't attract enough skilled workers to register</span><span class="dz-slot" style="min-width:80px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
+          <div class="dz" data-ans="Match" ondragover="dov(event)" ondrop="dop(event,this,'m4')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">Students booked the cheapest tutor regardless of subject fit, leading to poor sessions and churn</span><span class="dz-slot" style="min-width:80px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
+          <div class="dz" data-ans="Facilitate" ondragover="dov(event)" ondrop="dop(event,this,'m4')" style="display:flex;align-items:center;gap:0.6rem;"><span style="flex:1;">Airbnb hosts rejected guests based on name/ethnicity: platform connected them, bias blocked the exchange</span><span class="dz-slot" style="min-width:80px;border:1.5px dashed var(--faint);border-radius:6px;padding:0.35rem 0.5rem;text-align:center;font-size:0.78rem;color:var(--mid);">drop here</span></div>
         </div>
         <div>
           <div class="mhead">Design Function</div>
@@ -565,6 +571,9 @@ textarea.ref-input:focus { border-color: var(--accent); }
         <p>Epic wasn't building a rival to iOS. It was contesting the terms of participation inside Apple's ecosystem. The anti-steering ruling broke Apple's information asymmetry: developers could now tell users about cheaper alternatives, even without off-platform payment.</p>
       </div>
     </div>
+    <div style="background:var(--accent-bg);border:1px solid #d0dbe8;border-radius:var(--r);padding:1rem 1.4rem;margin-bottom:1.8rem;text-align:center;">
+      <p style="font-size:0.92rem;font-weight:600;color:var(--accent);line-height:1.5;">No. Our concerns about big tech firms misusing user data is NOT the same as turning on a camera in a Zoom session! &#x1F60A;</p>
+    </div>
     <div class="ex">
       <div class="exlabel">Exercise · Multiple Choice</div>
       <div class="exq">A top-rated consultant on your platform starts steering clients to pay via bank transfer, bypassing your 15% fee. Three clients have agreed. What's the strategically sound response?</div>
@@ -591,7 +600,7 @@ textarea.ref-input:focus { border-color: var(--accent); }
       </div>
       <div class="card">
         <div class="clabel muted">From the cases</div>
-        <h4>Lasso failed; Reels survived, because of envelopment</h4>
+        <h4>Lasso (Facebook's clone of TikTok) failed; Reels survived, because of envelopment</h4>
         <p>Lasso required TikTok users to adopt a new app from zero. Reels was embedded in Instagram's 1B+ user base. Meta didn't need to win a platform adoption battle; it just needed Reels good enough that users wouldn't bother switching.</p>
       </div>
     </div>
@@ -612,7 +621,7 @@ textarea.ref-input:focus { border-color: var(--accent); }
   <!-- RESULTS / REFLECTION -->
   <div class="page" id="p7">
     <div class="t-eyebrow">Reflection</div>
-    <h1 class="t-title">Before you go: one thought to leave behind.</h1>
+    <h1 class="t-title">Before you go: a moment to reflect.</h1>
 
     <div class="timer-box">
       <div class="timer-label">Time remaining</div>
@@ -621,8 +630,8 @@ textarea.ref-input:focus { border-color: var(--accent); }
 
     <div class="ref-box">
       <div class="ref-label">Brief Reflection</div>
-      <div class="ref-prompt">Looking back at the course, what is one concept or framework that changed how you think about markets, technology, or strategy?</div>
-      <div class="ref-sub">Keep it brief: 2 to 4 sentences. There is no right answer here. Be honest about what stuck and why.</div>
+      <div class="ref-prompt">I know with everything going on, "learning" has not been top of anyone's mind, which makes sense. But try to reflect at this point: what have you learned from the course about market/business strategy?</div>
+      <div class="ref-sub">There is no right answer here. Be honest about what stuck and why.</div>
       <textarea class="ref-input" id="reflection" placeholder="Write your reflection here..." maxlength="800"></textarea>
     </div>
 
@@ -762,7 +771,7 @@ function ansQ(id, btn, chosen, correct) {
   else {
     btn.classList.add('ng');
     box.querySelectorAll('.opt').forEach(o => {
-      const m = o.getAttribute('onclick').match(/'([A-D])','([A-D])'/);
+      const m = o.getAttribute('onclick').match(/'([A-E])','([A-E])'/);
       if (m && m[1] === correct) o.classList.add('rv');
     });
   }
@@ -795,11 +804,15 @@ function dop(e, target, mid) {
       p.textContent = prev.dataset.val; p.setAttribute('ondragstart', 'dst(event)');
       pool.appendChild(p);
     }
+    const oldSlot = prev.parentElement;
     prev.remove();
+    if (oldSlot && oldSlot.classList.contains('dz-slot') && !oldSlot.querySelector('.placed')) oldSlot.textContent = 'drop here';
   }
+  const slot = target.querySelector('.dz-slot');
   const pl = document.createElement('span');
   pl.className = 'placed'; pl.dataset.val = val; pl.textContent = val;
-  target.appendChild(pl);
+  if (slot) { slot.textContent = ''; slot.appendChild(pl); }
+  else { target.appendChild(pl); }
   if (dragging) dragging.classList.add('used');
   dragging = null;
   if (!answerHistory[mid]) answerHistory[mid] = [];
@@ -901,6 +914,7 @@ function initIntegrity() {
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement && !submitted) {
       fsExits++;
+      document.getElementById('ifs').textContent = fsExits;
       document.getElementById('fs-overlay').classList.add('on');
       emit('fs_exit', { fsExits });
     } else {
